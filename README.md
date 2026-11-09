@@ -4,8 +4,17 @@ The pure core of **raidr** — a bundle format, redaction engine, and analysis
 pipeline for capturing a running web app and reconstructing a working
 approximation of it.
 
+Published to **GitHub Packages** (not the public npm registry). Consumers need an
+`.npmrc` that routes the `@sudobility` scope and a GitHub token with `read:packages`:
+
+```
+# .npmrc
+@sudobility:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GH_PACKAGES_READ_TOKEN}
+```
+
 ```bash
-npm install @sudobility/raidr_processor
+npm install @sudobility/raidr_processor   # or: bun add @sudobility/raidr_processor
 ```
 
 ## What it does
@@ -21,6 +30,7 @@ snapshots — it produces the derived artifacts that reconstruction needs:
 | **Coverage** | `computeCoverage`, `toPathTemplate`, `endpointKey` |
 | **Analysis** | `parseSourceMap`, `recoverSources`, `inferSchema`, `buildApiModel`, `buildRouteModel`, `auditLinks`, `deriveTimeline` |
 | **Codegen** | `generateTypes`, `generateClient`, `generateReplayServer`, `generateProject` |
+| **Security audit** | `auditCandidates`, `auditPrompt`, `applyAuditAnswer`, `parseAuditAnswer`, `candidatesToIssues`, `AUDIT_INSTRUCTIONS` |
 
 ## The no-I/O constraint
 
@@ -33,7 +43,7 @@ Callers supply bytes; `raidr_processor` returns values. The consumers below sit 
 opposite sides of that line and never see each other:
 
 ```
-raidr_processor              pure: bundle format, redaction, coverage, inference, codegen
+raidr_processor              pure: bundle format, redaction, coverage, inference, codegen, security audit
    ├── raidr_extension   browser: CDP capture, offscreen buffer, side panel
    ├── raidr_cli         bun:     unzip, filesystem, project emit, replay server
    └── raidr_crawler     bun:     headless crawl, bundle writing
